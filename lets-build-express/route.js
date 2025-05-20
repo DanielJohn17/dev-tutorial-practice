@@ -1,3 +1,5 @@
+module.exports = Route;
+
 const methods = require("methods");
 const flatten = require("array-flatten");
 const Layer = require("./layer");
@@ -6,12 +8,14 @@ function Route(path) {
   this.path = path;
   this.stack = [];
 
-  this.method = {};
+  this.methods = {};
 }
+
+Route.prototype.dispatch = function dispatch(req, res, done) {};
 
 methods.forEach(function (method) {
   Route.prototype[method] = function () {
-    var handles = flatten(Array.prototype.slice.call(arguments));
+    var handles = flatten.flatten(Array.prototype.slice.call(arguments));
 
     for (var i = 0; i < handles.length; i++) {
       var handle = handles[i];
