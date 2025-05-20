@@ -30,7 +30,7 @@ proto.handle = function handle(req, res, out) {
 
 proto.route = function route(path) {
   var route = new Route(path);
-  var layer = new Layer(path, {}, route.dispach.bind(route));
+  var layer = new Layer(path, {}, route.dispatch.bind(route));
 
   layer.route = route;
   this.stack.push(layer);
