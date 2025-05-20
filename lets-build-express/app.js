@@ -3,6 +3,7 @@ var app = (exports = module.exports = {});
 var http = require("node:http");
 var methods = require("methods");
 var slice = Array.prototype.slice;
+var Router = require("./router");
 
 app.init = function () {
   this.cache = {};
@@ -35,7 +36,7 @@ app.lazyrouter = function lazyrouter() {
   }
 };
 
-app.litsen = function litsen() {
+app.listen = function listen() {
   var server = http.createServer(this);
-  return server.litsen.apply(server, arguments);
+  return server.listen.apply(server, arguments);
 };
