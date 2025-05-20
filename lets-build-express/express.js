@@ -1,6 +1,6 @@
 exports = module.exports = createApplication;
 
-const mixin = require("mixin");
+var mixin = require("merge-descriptors");
 var proto = require("./app");
 
 function createApplication() {
@@ -14,14 +14,3 @@ function createApplication() {
 
   return app;
 }
-
-let express = require("./express");
-const app = express();
-
-app.get("/", (req, res) => {
-  res.writeHead(200);
-  res.write("Hello World");
-  res.end();
-});
-
-app.listen(3000, () => console.log("Example app listening on port 3000!"));
