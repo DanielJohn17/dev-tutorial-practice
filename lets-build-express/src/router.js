@@ -25,23 +25,32 @@ var proto = (module.exports = function (options) {
 proto.handle = function handle(req, res, out) {
   var self = this;
   var stack = self.stack;
-  var path = getPathname(req);
-
-  var layer;
-  var match;
-  var route;
   var idx = 0;
 
-  while (match !== true && idx < stack.length) {
-    layer = stack[idx++];
-    match = matchLayer(layer, path);
-    route = layer.route;
+  next();
 
-    if (match !== true) {
-      continue;
+  function next() {
+    var path = getPathname(req);
+
+    var layer;
+    var match;
+    var route;
+
+    while (match !== true && idx < stack.length) {
+      layer = stack[idx++];
+      match = matchLayer(layer, path);
+      route = layer.route;
+
+      if (match !== true) {
+        continue;
+      }
+
+      if (!route) {
+        continue;
+      }
+
+      route.stack[0].handle_request(req, res, next);
     }
-
-    route.stack[0].handle_request(req, res);
   }
 };
 
