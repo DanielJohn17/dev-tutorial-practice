@@ -1,9 +1,10 @@
 var app = (exports = module.exports = {});
 
+var slice = Array.prototype.slice;
 var http = require("node:http");
 var methods = require("methods");
-var slice = Array.prototype.slice;
 var Router = require("./router");
+const middleware = require("./middleware/init");
 
 app.init = function () {
   this.cache = {};
@@ -34,6 +35,8 @@ app.lazyrouter = function lazyrouter() {
   if (!this._router) {
     this._router = new Router({});
   }
+
+  this._router.use(middleware.init(this));
 };
 
 app.listen = function listen() {
