@@ -10,3 +10,13 @@ function Layer(path, options, fn) {
   this.params = undefined;
   this.path = undefined;
 }
+
+Layer.prototype.handle_request = function handle(req, res, next) {
+  var fn = this.handle;
+
+  try {
+    fn(req, res, next);
+  } catch (err) {
+    console.log(err);
+  }
+};

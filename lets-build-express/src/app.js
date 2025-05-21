@@ -10,7 +10,7 @@ app.init = function () {
   this.engines = {};
   this.settings = {};
 
-  this.__router = undefined;
+  this._router = undefined;
 };
 
 methods.forEach(function (method) {
