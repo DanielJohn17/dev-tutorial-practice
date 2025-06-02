@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/DanielJohn17/pokedexcli/api"
+	"github.com/DanielJohn17/pokedexcli/pokeapi"
 )
 
 type cliCommand struct {
@@ -68,12 +68,12 @@ func getCommands() map[string]cliCommand {
 		"map": {
 			name:        "map",
 			description: "Lists 20 name of locations",
-			callback:    api.CommandMap,
+			callback:    pokeapi.CommandMap,
 		},
 		"mapb": {
 			name:        "mapb",
 			description: "Lists the name of previous 20 locations",
-			callback:    api.CommandMapb,
+			callback:    pokeapi.CommandMapb,
 		},
 	}
 
