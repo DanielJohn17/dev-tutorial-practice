@@ -21,18 +21,14 @@ type LocationArea struct {
 	URL  string `json:"url"`
 }
 
-var offset = 0
+var LocationAreaResponseVar LocationAreaResponse
 
-var locationAreaResponse LocationAreaResponse
-
-func getLocation(url string) error {
+func GetLocation(url string) error {
 
 	cache := pokecache.NewCache(10 * time.Second)
 
-	fmt.Println(url)
-
 	if cachedData, exists := cache.Get(url); exists {
-		if err := parseBody(cachedData, &locationAreaResponse); err != nil {
+		if err := parseBody(cachedData, &LocationAreaResponseVar); err != nil {
 			return err
 		}
 	}
@@ -49,11 +45,11 @@ func getLocation(url string) error {
 	}
 
 	cache.Add(url, body)
-	if err := parseBody(body, &locationAreaResponse); err != nil {
+	if err := parseBody(body, &LocationAreaResponseVar); err != nil {
 		return err
 	}
 
-	for _, area := range locationAreaResponse.Results {
+	for _, area := range LocationAreaResponseVar.Results {
 		fmt.Println(area.Name)
 	}
 
