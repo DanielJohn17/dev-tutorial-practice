@@ -10,11 +10,13 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(args []string) error
 }
 
 func start_repl() {
 	scanner := bufio.NewScanner(os.Stdin)
+	commands := getCommands()
+
 	for {
 		fmt.Print("Pokedex > ")
 
@@ -30,15 +32,13 @@ func start_repl() {
 			continue
 		}
 
-		commands := getCommands()
-
 		cmd, ok := commands[tokens[0]]
 		if !ok {
 			fmt.Println("Unknown command")
 			continue
 		}
 
-		if err := cmd.callback(); err != nil {
+		if err := cmd.callback(tokens[1:]); err != nil {
 			fmt.Printf("Error executing command '%s': %v\n", cmd.name, err)
 			continue
 		}
@@ -72,6 +72,21 @@ func getCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Lists the name of previous 20 locations",
 			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore",
+			description: "Explore a Pokemon by name",
+			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Catch a Pokemon by name",
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Inspect a Pokemon by name",
+			callback:    commandInspect,
 		},
 	}
 
