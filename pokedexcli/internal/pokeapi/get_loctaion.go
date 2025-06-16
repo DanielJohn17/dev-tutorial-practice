@@ -1,7 +1,6 @@
 package pokeapi
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -54,10 +53,4 @@ func GetLocation(url string) error {
 	}
 
 	return nil
-}
-
-func parseBody(body []byte, v *LocationAreaResponse) error {
-	parseErr := json.Unmarshal(body, &v)
-
-	return parseErr
 }
