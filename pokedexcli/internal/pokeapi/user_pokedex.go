@@ -12,3 +12,11 @@ func (u *UserPokedex) Add(caughtPokemon CaughtPokemonResponse) {
 	}
 	u.Pokemons[caughtPokemon.Name] = caughtPokemon
 }
+
+func ListCaughtPokemons() []CaughtPokemonResponse {
+	var caughtPokemons []CaughtPokemonResponse
+	for _, pokemon := range userPokedex.Pokemons {
+		caughtPokemons = append(caughtPokemons, pokemon)
+	}
+	return caughtPokemons
+}
