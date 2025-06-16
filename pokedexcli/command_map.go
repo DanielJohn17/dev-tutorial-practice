@@ -4,10 +4,10 @@ import "github.com/DanielJohn17/pokedexcli/internal/pokeapi"
 
 var locationAreaResponse = pokeapi.LocationAreaResponseVar
 
-func commandMapf() error {
+func commandMapf(_ []string) error {
 	var url string
 	if locationAreaResponse.Next == "" {
-		url = pokeapi.BaseURL
+		url = pokeapi.BaseURL + "/location-area/"
 	} else {
 		url = locationAreaResponse.Next
 	}
@@ -17,10 +17,10 @@ func commandMapf() error {
 	return err
 }
 
-func commandMapb() error {
+func commandMapb(_ []string) error {
 	var url string
 	if locationAreaResponse.Prvious == "" {
-		url = pokeapi.BaseURL
+		url = pokeapi.BaseURL + "/location-area/"
 	} else {
 		url = locationAreaResponse.Prvious
 	}
