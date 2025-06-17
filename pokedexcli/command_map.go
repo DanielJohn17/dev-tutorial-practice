@@ -1,31 +1,38 @@
 package main
 
-import "github.com/DanielJohn17/pokedexcli/internal/pokeapi"
+import (
+	"github.com/DanielJohn17/pokedexcli/internal/pokeapi"
+)
 
-var locationAreaResponse = pokeapi.LocationAreaResponseVar
+var url string
 
 func commandMapf(_ []string) error {
-	var url string
-	if locationAreaResponse.Next == "" {
+
+	if url == "" {
 		url = pokeapi.BaseURL + "/location-area/"
-	} else {
-		url = locationAreaResponse.Next
 	}
 
-	err := pokeapi.GetLocation(url)
+	_, nextUrl, err := pokeapi.GetLocation(url)
+	if err != nil {
+		return err
+	}
+	url = nextUrl
 
-	return err
+	return nil
 }
 
 func commandMapb(_ []string) error {
-	var url string
-	if locationAreaResponse.Prvious == "" {
+
+	if url == "" {
 		url = pokeapi.BaseURL + "/location-area/"
-	} else {
-		url = locationAreaResponse.Prvious
 	}
 
-	err := pokeapi.GetLocation(url)
+	prevUrl, _, err := pokeapi.GetLocation(url)
+	if err != nil {
+		return err
+	}
 
-	return err
+	url = prevUrl
+
+	return nil
 }
