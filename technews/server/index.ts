@@ -1,69 +1,75 @@
-import { type Context, Hono } from "hono";
-import { auth } from "./utils/auth";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
+import { auth } from "./utils/auth";
 import type { ErrorResponse } from "@/shared/types";
+import type { Context } from "@/context";
+import { postRoutes } from "@/routes/posts";
+import { logger } from "hono/logger";
 
-const app = new Hono<{
-  Variables: {
-    user: typeof auth.$Infer.Session.user | null;
-    session: typeof auth.$Infer.Session.session | null;
-  };
-}>();
+// save cookie in memory for development purposes
+export let sessionCookie: string | null = null;
 
-app.get("/", (c: Context) => {
-  return c.json({
-    message: "Hello, World!",
-    timestamp: new Date().toISOString(),
-  });
-});
+const app = new Hono<Context>();
 
-app.use("*", async (c, next) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
-
-  if (!session) {
-    c.set("user", null);
-    c.set("session", null);
-    return next();
+app.use("*", logger());
+app.use(
+  "*",
+  cors({
+    origin: "http://localhost:5173", // replace with your origin
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  }),
+);
+app.on(["POST", "GET"], "/api/auth/*", async (c) => {
+  const response = await auth.handler(c.req.raw);
+  const setCookie = response.headers.get("Set-Cookie");
+  if (setCookie) {
+    sessionCookie = setCookie.split(";")[0]!; // Store cookie in memory
   }
-
-  c.set("user", session.user);
-  c.set("session", session.session);
-  return next();
+  return response;
 });
 
 const apiRoutes = app
   .basePath("/api")
-  .on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw))
-  .onError((err, c) => {
-    if (err instanceof HTTPException) {
-      const errResponse =
-        err.res ??
-        c.json<ErrorResponse>(
-          {
-            success: false,
-            error: err.message,
-            isFormError:
-              err.cause && typeof err.cause === "object" && "form" in err.cause
-                ? err.cause.form === true
-                : false,
-          },
-          err.status,
-        );
+  .get("/", (c) => {
+    return c.json({ message: "Hello", date: new Date().toISOString() });
+  })
+  .route("/posts", postRoutes);
 
-      return errResponse;
-    }
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    const errResponse =
+      err.res ??
+      c.json<ErrorResponse>(
+        {
+          success: false,
+          error: err.message,
+          isFormError:
+            err.cause && typeof err.cause === "object" && "form" in err.cause
+              ? err.cause.form === true
+              : false,
+        },
+        err.status,
+      );
 
-    return c.json<ErrorResponse>(
-      {
-        success: false,
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Internal Server Error"
-            : (err.stack ?? err.message),
-      },
-      500,
-    );
-  });
+    return errResponse;
+  }
+
+  return c.json<ErrorResponse>(
+    {
+      success: false,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Internal Server Error"
+          : (err.stack ?? err.message),
+    },
+    501,
+  );
+});
 
 export default app;
 export type ApiRoutes = typeof apiRoutes;
