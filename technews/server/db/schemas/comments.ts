@@ -3,12 +3,14 @@ import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 import { postsTable } from "./posts";
 import { commentUpvotesTable } from "./upvotes";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
 
 export const commentsTable = pgTable("comments", {
   id: serial("id").primaryKey(),
-  userId: serial("user_id").notNull(),
+  userId: text("user_id").notNull(),
   postId: integer("post_id").notNull(),
-  parentCommentId: serial("parent_comment_id"),
+  parentCommentId: integer("parent_comment_id"),
   content: text("content").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
@@ -38,3 +40,9 @@ export const commentsRelations = relations(commentsTable, ({ one, many }) => ({
   }),
   commentUpvotes: many(commentUpvotesTable, { relationName: "commentUpvotes" }),
 }));
+
+export const insertCommentSchema = createInsertSchema(commentsTable, {
+  content: z
+    .string()
+    .min(3, { error: "Content must be at least 3 characters long." }),
+});
