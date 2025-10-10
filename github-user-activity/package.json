@@ -1,0 +1,22 @@
+{
+  "name": "github-user-activity",
+  "version": "1.0.0",
+  "description": "Get user github activity",
+  "keywords": [
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "dev-tutorial-practice"
+  },
+  "bin": {
+    "github-activity": "./index.js"
+  },
+  "license": "ISC",
+  "author": "DanielJohn17",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
