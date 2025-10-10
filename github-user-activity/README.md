@@ -54,7 +54,7 @@ npm link
 # Use the command
 github-activity <github-username>
 # When done
-npm unlink -g github-user-activity
+npm unlink -g
 ```
 
 ## Usage
