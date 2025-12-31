@@ -46,7 +46,6 @@ void insert_end(int data) {
 }
 
 void insert_at_index(int data, int index) {
-  double_list_t *new = _create_new_node(data);
 
   if (index >= list_len()) {
     printf("Invalid index.\n");
@@ -56,9 +55,10 @@ void insert_at_index(int data, int index) {
   double_list_t *temp = head;
   if (index == 0) {
     insert_start(data);
-  } else if (index == list_len() - 1) {
+  } else if (index == list_len()) {
     insert_end(data);
   } else {
+    double_list_t *new = _create_new_node(data);
 
     for (int i = 0; i < index; i++) {
       temp = temp->next;
