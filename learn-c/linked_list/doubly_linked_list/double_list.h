@@ -23,5 +23,8 @@ void traverse_list_reverse(void);
 // length
 int list_len(void);
 
+// Free all
+void free_all(void);
+
 extern double_list_t *head;
 extern double_list_t *tail;
