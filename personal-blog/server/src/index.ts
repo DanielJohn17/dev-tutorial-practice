@@ -1,14 +1,9 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { HTTPException } from "hono/http-exception";
-import { config } from "dotenv";
-import * as path from "path";
 
+import "@/utils/dotenv_config";
 import { ErrorResponse } from "@/shared/types";
-
-config({
-  path: path.resolve(__dirname, "../../.env"),
-});
 
 const app = new Hono();
 
