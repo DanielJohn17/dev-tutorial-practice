@@ -1,13 +1,19 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
+import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 
 import "@/utils/dotenv_config";
 import { ErrorResponse } from "@/shared/types";
+import { auth } from "@/utils/auth";
 
-const app = new Hono();
+const app = new Hono().basePath("/api");
 
 app.use("*", logger());
+app.use("*", cors());
+
+// better auth
+app.on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw));
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
