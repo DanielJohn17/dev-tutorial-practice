@@ -1,8 +1,18 @@
 import { Hono } from "hono";
+import { logger } from "hono/logger";
 import { HTTPException } from "hono/http-exception";
+import { config } from "dotenv";
+import * as path from "path";
+
 import { ErrorResponse } from "@/shared/types";
 
+config({
+  path: path.resolve(__dirname, "../../.env"),
+});
+
 const app = new Hono();
+
+app.use("*", logger());
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
