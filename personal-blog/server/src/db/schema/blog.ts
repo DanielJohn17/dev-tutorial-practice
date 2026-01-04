@@ -1,4 +1,4 @@
-import { date, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { date, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import z from "zod";
@@ -7,12 +7,12 @@ import { user } from "@/db/schema/auth";
 import { favouriteBlogsTable } from "./favourite";
 
 export const blogTable = pgTable("blogs", {
-  id: integer("id").primaryKey(),
+  id: serial("id").primaryKey(),
   title: varchar("title", { length: 256 }),
-  content: text("content"),
+  content: text("content").notNull(),
   createdAt: date("created_at", { mode: "string" }).defaultNow(),
   updatedAt: date("updated_at", { mode: "string" }).defaultNow(),
-  authorId: text("author_id"),
+  authorId: text("author_id").notNull(),
 });
 
 export const userRelations = relations(user, ({ many }) => ({
