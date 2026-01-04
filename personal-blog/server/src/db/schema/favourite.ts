@@ -12,8 +12,8 @@ export const favouriteBlogsTable = pgTable(
     blogId: integer("blog_id")
       .notNull()
       .references(() => blogTable.id),
-    createdAt: date("created_at", { mode: "string" }),
-    updatedAt: date("updated_at", { mode: "string" }),
+    createdAt: date("created_at", { mode: "string" }).defaultNow(),
+    updatedAt: date("updated_at", { mode: "string" }).defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.blogId] })],
 );

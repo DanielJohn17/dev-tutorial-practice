@@ -8,8 +8,8 @@ export const blogTable = pgTable("blogs", {
   id: integer("id").primaryKey(),
   title: varchar("title", { length: 256 }),
   content: text("text"),
-  createdAt: date("created_at", { mode: "string" }),
-  updatedAt: date("updated_at", { mode: "string" }),
+  createdAt: date("created_at", { mode: "string" }).defaultNow(),
+  updatedAt: date("updated_at", { mode: "string" }).defaultNow(),
   authorId: text("author_id"),
 });
 
