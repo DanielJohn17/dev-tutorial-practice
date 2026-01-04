@@ -1,4 +1,9 @@
-import { insertBlogSchema } from "../server/src/db/schema/blog.ts";
+import { insertBlogSchema } from "../server/src/db/schema/blog";
+
+export type SuccessResponse<T = void> = {
+  success: true;
+  message: string;
+} & (T extends void ? {} : { data: T });
 
 export type ErrorResponse = {
   success: false;
