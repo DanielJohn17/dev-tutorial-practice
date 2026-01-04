@@ -12,8 +12,17 @@ import { blogRoute } from "./routes/blog";
 const app = new Hono<Context>();
 
 app.use("*", logger());
-app.use("*", cors());
-
+app.use(
+  "*", // or replace with "*" to enable cors for all routes
+  cors({
+    origin: "http://localhost:5000", // replace with your origin
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  }),
+);
 // better auth
 app.use("*", async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
@@ -65,5 +74,5 @@ const apiRoute = app
     );
   });
 
-export default app;
 export type AppType = typeof apiRoute;
+export default app;
