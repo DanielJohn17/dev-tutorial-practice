@@ -7,8 +7,9 @@ import "@/utils/dotenv_config";
 import { ErrorResponse } from "@/shared/types";
 import { auth } from "@/utils/auth";
 import { Context } from "@/context";
+import { blogRoute } from "./routes/blog";
 
-const app = new Hono<Context>().basePath("/api");
+const app = new Hono<Context>();
 
 app.use("*", logger());
 app.use("*", cors());
@@ -30,37 +31,39 @@ app.use("*", async (c, next) => {
   await next();
 });
 
-app.on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw));
+const apiRoute = app
+  .basePath("/api")
+  .on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))
+  .get("/", (c) => {
+    return c.text("Hello Hono!");
+  })
+  .route("/blog", blogRoute)
+  .onError((err, c) => {
+    if (err instanceof HTTPException) {
+      const errorResponse =
+        err.res ??
+        c.json<ErrorResponse>(
+          {
+            success: false,
+            error: err.message,
+          },
+          err.status,
+        );
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
+      return errorResponse;
+    }
 
-app.onError((err, c) => {
-  if (err instanceof HTTPException) {
-    const errorResponse =
-      err.res ??
-      c.json<ErrorResponse>(
-        {
-          success: false,
-          error: err.message,
-        },
-        err.status,
-      );
-
-    return errorResponse;
-  }
-
-  return c.json<ErrorResponse>(
-    {
-      success: false,
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Internal Server Error"
-          : (err.stack ?? err.message),
-    },
-    501,
-  );
-});
+    return c.json<ErrorResponse>(
+      {
+        success: false,
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Internal Server Error"
+            : (err.stack ?? err.message),
+      },
+      501,
+    );
+  });
 
 export default app;
+export type AppType = typeof apiRoute;
