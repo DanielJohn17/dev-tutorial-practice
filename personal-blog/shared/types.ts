@@ -16,6 +16,10 @@ export const paginationSchema = z.object({
   limit: z.number().optional().default(10),
 });
 
+export const paramSchema = z.object({
+  id: z.coerce.number(),
+});
+
 export const createBlogSchema = insertBlogSchema.pick({
   title: true,
   content: true,
