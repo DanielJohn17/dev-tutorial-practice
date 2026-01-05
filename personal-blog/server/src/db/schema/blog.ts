@@ -8,10 +8,10 @@ import { favouriteBlogsTable } from "./favourite";
 
 export const blogTable = pgTable("blogs", {
   id: serial("id").primaryKey(),
-  title: varchar("title", { length: 256 }),
+  title: varchar("title", { length: 256 }).notNull(),
   content: text("content").notNull(),
-  createdAt: date("created_at", { mode: "string" }).defaultNow(),
-  updatedAt: date("updated_at", { mode: "string" }).defaultNow(),
+  createdAt: date("created_at", { mode: "string" }).notNull().defaultNow(),
+  updatedAt: date("updated_at", { mode: "string" }).notNull().defaultNow(),
   authorId: text("author_id").notNull(),
 });
 
