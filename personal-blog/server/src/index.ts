@@ -2,9 +2,9 @@ import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
+import { ErrorResponse } from "@repo/shared";
 
 import "@/utils/dotenv_config";
-import { ErrorResponse } from "@/shared/types";
 import { auth } from "@/utils/auth";
 import { Context } from "@/context";
 import { blogRoute } from "./routes/blog";
