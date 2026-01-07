@@ -71,11 +71,14 @@ export const adminRoute = new Hono<Context>()
         throw new HTTPException(500, { message: "Failed to update blog" });
       }
 
-      return c.json<SuccessResponse<{ blogId: number }>>({
-        success: true,
-        message: "Successfully updated blog",
-        data: { blogId: blog.blogId },
-      });
+      return c.json<SuccessResponse<{ blogId: number }>>(
+        {
+          success: true,
+          message: "Successfully updated blog",
+          data: { blogId: blog.blogId },
+        },
+        200,
+      );
     },
   )
   .delete("/blog/:id", zValidator("param", paramSchema), async (c) => {
@@ -100,9 +103,12 @@ export const adminRoute = new Hono<Context>()
       throw new HTTPException(500, { message: "Failed to delete blog" });
     }
 
-    return c.json<SuccessResponse<{ blogId: number }>>({
-      success: true,
-      message: "Successfully deleted table",
-      data: { blogId: deletedBlog.blogId },
-    });
+    return c.json<SuccessResponse<{ blogId: number }>>(
+      {
+        success: true,
+        message: "Successfully deleted table",
+        data: { blogId: deletedBlog.blogId },
+      },
+      200,
+    );
   });

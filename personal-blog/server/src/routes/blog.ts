@@ -66,15 +66,18 @@ export const blogRoute = new Hono<Context>()
       throw new HTTPException(404, { message: "No blogs found" });
     }
 
-    return c.json<PaginatedSuccessResponse<Blog[]>>({
-      success: true,
-      message: "Successfully retrived blogs",
-      pagination: {
-        page,
-        totalPages: Math.ceil(count.count / limit),
+    return c.json<PaginatedSuccessResponse<Blog[]>>(
+      {
+        success: true,
+        message: "Successfully retrived blogs",
+        pagination: {
+          page,
+          totalPages: Math.ceil(count.count / limit),
+        },
+        data: blogs as Blog[],
       },
-      data: blogs as Blog[],
-    });
+      200,
+    );
   })
   .get("/:id", zValidator("param", paramSchema), async (c) => {
     const user = c.get("user");
@@ -125,7 +128,15 @@ export const blogRoute = new Hono<Context>()
       throw new HTTPException(404, { message: "Blog not found" });
     }
 
-    return c.json<SuccessResponse<Blog>>({
+    return c.json<SuccessResponse<Blog>>(
+      {
+        success: true,
+        message: "Successfully retrived blog",
+        data: blog as Blog,
+      },
+      200,
+    );
+  })
       success: true,
       message: "Successfully retrived blog",
       data: blog as Blog,
