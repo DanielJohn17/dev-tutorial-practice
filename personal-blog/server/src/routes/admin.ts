@@ -54,7 +54,7 @@ export const adminRoute = new Hono<Context>()
         throw new HTTPException(401, { message: "User not Found" });
       }
 
-      if (user.role == "admin") {
+      if (user.role !== "admin") {
         throw new HTTPException(401, { message: "User is not an admin" });
       }
 
@@ -85,7 +85,7 @@ export const adminRoute = new Hono<Context>()
       throw new HTTPException(401, { message: "User not Found" });
     }
 
-    if (user.role == "admin") {
+    if (user.role !== "admin") {
       throw new HTTPException(401, { message: "User is not an admin" });
     }
 
