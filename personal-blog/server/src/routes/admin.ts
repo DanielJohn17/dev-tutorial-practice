@@ -77,4 +77,32 @@ export const adminRoute = new Hono<Context>()
         data: { blogId: blog.blogId },
       });
     },
-  );
+  )
+  .delete("/blog/:id", zValidator("param", paramSchema), async (c) => {
+    const user = c.get("user");
+
+    if (!user) {
+      throw new HTTPException(401, { message: "User not Found" });
+    }
+
+    if (user.role == "admin") {
+      throw new HTTPException(401, { message: "User is not an admin" });
+    }
+
+    const { id } = c.req.valid("param");
+
+    const [deletedBlog] = await db
+      .delete(blogTable)
+      .where(eq(blogTable.id, id))
+      .returning({ blogId: blogTable.id });
+
+    if (!deletedBlog) {
+      throw new HTTPException(500, { message: "Failed to delete blog" });
+    }
+
+    return c.json<SuccessResponse<{ blogId: number }>>({
+      success: true,
+      message: "Successfully deleted table",
+      data: { blogId: deletedBlog.blogId },
+    });
+  });

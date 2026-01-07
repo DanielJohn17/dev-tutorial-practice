@@ -1,11 +1,12 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "strict": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
+    // "jsx": "react-jsx",
+    // "jsxImportSource": "hono/jsx",
 
     "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+      "@/*": ["./src/*"],
+    },
+  },
+  "include": ["src"],
 }

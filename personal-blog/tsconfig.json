@@ -10,17 +10,18 @@
     "moduleResolution": "Bundler",
     "preserveWatchOutput": true,
     "skipLibCheck": true,
+    "incremental": true,
     "strict": true,
     "target": "ESNext",
     "paths": {
       "@/server/*": ["./server/*"],
-      "@/frontend/*": ["./frontend/*"]
-    }
+      "@/frontend/*": ["./frontend/*"],
+    },
   },
   "files": [],
   "references": [
     { "path": "./frontend" },
     { "path": "./server" },
-    { "path": "./shared" }
-  ]
+    { "path": "./shared" },
+  ],
 }
