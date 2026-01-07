@@ -1,0 +1,25 @@
+{
+  "name": "personal-blog",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "bun run --cwd frontend dev",
+    "dev:server": "bun run --cwd server dev",
+    "dev": "bun x concurrently \"bun dev:frontend\" \"bun dev:server\""
+  },
+  "workspaces": [
+    "frontend",
+    "server",
+    "shared"
+  ],
+  "dependencies": {
+    "@repo/shared": "workspace:*",
+    "better-auth": "^1.4.10",
+    "prettier": "^3.7.4",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@tanstack/react-query": "^5.90.16",
+    "react-hook-form": "^7.70.0"
+  }
+}

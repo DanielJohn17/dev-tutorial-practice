@@ -1,0 +1,65 @@
+import {
+  insertBlogSchema,
+  updateBlogSchema,
+} from "../server/src/db/schema/blog";
+import { z } from "zod";
+
+export type SuccessResponse<T = void> = {
+  success: true;
+  message: string;
+} & (T extends void ? {} : { data: T });
+
+export type ErrorResponse = {
+  success: false;
+  error: string;
+};
+
+export const paginationSchema = z.object({
+  page: z.coerce.number().optional().default(1),
+  limit: z.coerce.number().optional().default(10),
+});
+
+export const paramSchema = z.object({
+  id: z.coerce.number(),
+});
+
+export const createBlogSchema = insertBlogSchema.pick({
+  title: true,
+  content: true,
+});
+
+export const createUpdateBlogSchema = updateBlogSchema
+  .pick({
+    title: true,
+    content: true,
+  })
+  .refine((data) => data.title || data.content, {
+    error: "Either title or content must be provided",
+    path: ["title", "content"],
+  });
+
+export type Blog = {
+  id: number;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    username: string;
+  };
+  isFavourite: boolean;
+};
+
+export type FavouriteBlog = Omit<
+  Blog,
+  "updatedAt" | "content" | "user" | "isFavourite"
+> & { authorId: string };
+
+export type PaginatedSuccessResponse<T> = {
+  pagination: {
+    page: number;
+    totalPages: number;
+  };
+  data: T;
+} & Omit<SuccessResponse, "data">;

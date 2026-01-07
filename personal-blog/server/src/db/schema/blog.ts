@@ -1,0 +1,44 @@
+import { date, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import z from "zod";
+
+import { user } from "@/db/schema/auth";
+import { favouriteBlogsTable } from "./favourite";
+
+export const blogTable = pgTable("blogs", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 256 }).notNull(),
+  content: text("content").notNull(),
+  createdAt: date("created_at", { mode: "string" }).notNull().defaultNow(),
+  updatedAt: date("updated_at", { mode: "string" }).notNull().defaultNow(),
+  authorId: text("author_id").notNull(),
+});
+
+export const userRelations = relations(user, ({ many }) => ({
+  blogs: many(blogTable),
+  favourites: many(favouriteBlogsTable),
+}));
+
+export const blogRelations = relations(blogTable, ({ one, many }) => ({
+  author: one(user, {
+    fields: [blogTable.authorId],
+    references: [user.id],
+  }),
+  favourites: many(favouriteBlogsTable),
+}));
+
+export const insertBlogSchema = createInsertSchema(blogTable, {
+  title: z
+    .string()
+    .min(3, { error: "Title must be at least 3  characters long" }),
+  content: z.string(),
+});
+
+export const updateBlogSchema = createUpdateSchema(blogTable, {
+  title: z
+    .string()
+    .min(3, { error: "Title must be at least 3  characters long" })
+    .optional(),
+  content: z.string().optional(),
+});
