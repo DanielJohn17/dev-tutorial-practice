@@ -51,6 +51,11 @@ export type Blog = {
   isFavourite: boolean;
 };
 
+export type FavouriteBlog = Omit<
+  Blog,
+  "updatedAt" | "content" | "user" | "isFavourite"
+> & { authorId: string };
+
 export type PaginatedSuccessResponse<T> = {
   pagination: {
     page: number;

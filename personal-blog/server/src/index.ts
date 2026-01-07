@@ -9,6 +9,7 @@ import { auth } from "@/utils/auth";
 import { Context } from "@/context";
 import { blogRoute } from "./routes/blog";
 import { adminRoute } from "./routes/admin";
+import { favouriteRoute } from "./routes/favouries";
 
 const app = new Hono<Context>();
 
@@ -49,6 +50,7 @@ const apiRoute = app
   })
   .route("/blog", blogRoute)
   .route("/admin", adminRoute)
+  .route("/fav", favouriteRoute)
   .onError((err, c) => {
     if (err instanceof HTTPException) {
       const errorResponse =
