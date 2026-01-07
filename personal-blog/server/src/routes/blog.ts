@@ -94,6 +94,8 @@ export const blogRoute = new Hono<Context>()
         id: blogTable.id,
         title: blogTable.title,
         content: blogTable.content,
+        createdAt: blogTable.createdAt,
+        updatedAt: blogTable.updatedAt,
         user: {
           id: userTable.id,
           username: userTable.name,
