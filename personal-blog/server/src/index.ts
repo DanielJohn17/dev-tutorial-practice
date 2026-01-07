@@ -8,6 +8,7 @@ import "@/utils/dotenv_config";
 import { auth } from "@/utils/auth";
 import { Context } from "@/context";
 import { blogRoute } from "./routes/blog";
+import { adminRoute } from "./routes/admin";
 
 const app = new Hono<Context>();
 
@@ -47,6 +48,7 @@ const apiRoute = app
     return c.text("Hello Hono!");
   })
   .route("/blog", blogRoute)
+  .route("/admin", adminRoute)
   .onError((err, c) => {
     if (err instanceof HTTPException) {
       const errorResponse =
