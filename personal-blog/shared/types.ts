@@ -15,8 +15,8 @@ export type ErrorResponse = {
 };
 
 export const paginationSchema = z.object({
-  page: z.number().optional().default(1),
-  limit: z.number().optional().default(10),
+  page: z.coerce.number().optional().default(1),
+  limit: z.coerce.number().optional().default(10),
 });
 
 export const paramSchema = z.object({
