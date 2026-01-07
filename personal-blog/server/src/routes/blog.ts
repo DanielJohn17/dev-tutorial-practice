@@ -62,9 +62,6 @@ export const blogRoute = new Hono<Context>()
     }
 
     const blogs = await blogQuery;
-    if (blogs.length === 0) {
-      throw new HTTPException(404, { message: "No blogs found" });
-    }
 
     return c.json<PaginatedSuccessResponse<Blog[]>>(
       {

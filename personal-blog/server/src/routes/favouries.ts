@@ -27,9 +27,6 @@ export const favouriteRoute = new Hono<Context>().get("/", async (c) => {
     .where(eq(favouriteBlogsTable.userId, user.id));
 
   const blogs = await blogQuery;
-  if (blogs.length === 0) {
-    throw new HTTPException(404, { message: "Blogs not found" });
-  }
 
   return c.json<SuccessResponse<FavouriteBlog[]>>(
     {
