@@ -13,10 +13,6 @@
     "incremental": true,
     "strict": true,
     "target": "ESNext",
-    "paths": {
-      "@/server/*": ["./server/*"],
-      "@/frontend/*": ["./frontend/*"],
-    },
   },
   "files": [],
   "references": [
