@@ -1,4 +1,7 @@
-import { insertBlogSchema } from "../server/src/db/schema/blog";
+import {
+  insertBlogSchema,
+  updateBlogSchema,
+} from "../server/src/db/schema/blog";
 import { z } from "zod";
 
 export type SuccessResponse<T = void> = {
@@ -24,6 +27,16 @@ export const createBlogSchema = insertBlogSchema.pick({
   title: true,
   content: true,
 });
+
+export const createUpdateBlogSchema = updateBlogSchema
+  .pick({
+    title: true,
+    content: true,
+  })
+  .refine((data) => data.title || data.content, {
+    error: "Either title or content must be provided",
+    path: ["title", "content"],
+  });
 
 export type Blog = {
   id: number;

@@ -1,6 +1,6 @@
 import { date, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import z from "zod";
 
 import { user } from "@/db/schema/auth";
@@ -33,4 +33,12 @@ export const insertBlogSchema = createInsertSchema(blogTable, {
     .string()
     .min(3, { error: "Title must be at least 3  characters long" }),
   content: z.string(),
+});
+
+export const updateBlogSchema = createUpdateSchema(blogTable, {
+  title: z
+    .string()
+    .min(3, { error: "Title must be at least 3  characters long" })
+    .optional(),
+  content: z.string().optional(),
 });

@@ -7,6 +7,8 @@ import { db } from "@/db";
 import { blogTable } from "@/db/schema/blog";
 import {
   createBlogSchema,
+  createUpdateBlogSchema,
+  paramSchema,
   SuccessResponse,
 } from "@repo/shared";
 import { eq } from "drizzle-orm";
@@ -41,3 +43,38 @@ export const adminRoute = new Hono<Context>()
       201,
     );
   })
+  .patch(
+    "/blog/:id",
+    zValidator("param", paramSchema),
+    zValidator("json", createUpdateBlogSchema),
+    async (c) => {
+      const user = c.get("user");
+
+      if (!user) {
+        throw new HTTPException(401, { message: "User not Found" });
+      }
+
+      if (user.role == "admin") {
+        throw new HTTPException(401, { message: "User is not an admin" });
+      }
+
+      const { title, content } = c.req.valid("json");
+      const { id } = c.req.valid("param");
+
+      const [blog] = await db
+        .update(blogTable)
+        .set({ title, content })
+        .where(eq(blogTable.id, id))
+        .returning({ blogId: blogTable.id });
+
+      if (!blog) {
+        throw new HTTPException(500, { message: "Failed to update blog" });
+      }
+
+      return c.json<SuccessResponse<{ blogId: number }>>({
+        success: true,
+        message: "Successfully updated blog",
+        data: { blogId: blog.blogId },
+      });
+    },
+  );
