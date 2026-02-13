@@ -3,14 +3,15 @@ package headers
 import (
 	"bytes"
 	"fmt"
+	"regexp"
+	"strings"
 )
-
-type Headers map[string]string
 
 var crlf = []byte("\r\n")
 
-func NewHeaders() Headers {
-	return map[string]string{}
+func isToken(input string) bool {
+	re := regexp.MustCompile(`^[A-Za-z0-9!#$%&'*+\-\.\^_` + "`" + `|~]+$`)
+	return re.MatchString(input)
 }
 
 func parseHeader(line []byte) (string, string, error) {
@@ -30,7 +31,23 @@ func parseHeader(line []byte) (string, string, error) {
 	return string(name), string(value), nil
 }
 
-func (h Headers) Parse(data []byte) (int, bool, error) {
+type Headers struct {
+	headers map[string]string
+}
+
+func NewHeaders() *Headers {
+	return &Headers{headers: map[string]string{}}
+}
+
+func (h *Headers) Get(name string) string {
+	return h.headers[strings.ToLower(name)]
+}
+
+func (h *Headers) Set(name, value string) {
+	h.headers[strings.ToLower(name)] = value
+}
+
+func (h *Headers) Parse(data []byte) (int, bool, error) {
 	read := 0
 	done := false
 
@@ -52,8 +69,12 @@ func (h Headers) Parse(data []byte) (int, bool, error) {
 			return 0, done, err
 		}
 
+		if !isToken(name) {
+			return 0, false, fmt.Errorf("Malformed header name")
+		}
+
 		read += idx + len(crlf)
-		h[name] = value
+		h.Set(name, value)
 	}
 
 	return read, done, nil
