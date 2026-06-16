@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Toaster } from '@/components/ui/sonner'
 import { Header } from '@/components/Header'
@@ -82,6 +83,7 @@ export default function App() {
       </Tabs>
 
       <Toaster position="top-center" theme={theme === 'system' ? undefined : theme} />
+      <Analytics />
     </div>
   )
 }
