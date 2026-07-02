@@ -9,10 +9,12 @@ import (
 type Config struct {
 	DBName string
 	DBHost string
-	DBAddress string
-	Port string
+	DBUser string
+	DBPassword string
+	DBPort string
 }
 
+var Env = initConfig()
 
 func initConfig() Config {
 	godotenv.Load()
@@ -20,6 +22,9 @@ func initConfig() Config {
 	return  Config{
 		DBName: GetEnv("DB_NAME", "todolist_db"),
 		DBHost: GetEnv("DB_HOST", "localhost"),
+		DBUser: GetEnv("DB_USER", "postgres"),
+		DBPassword: GetEnv("DB_PASSWORD", ""),
+		DBPort: GetEnv("DB_PORT", "5432"),
 	}
 }
 
@@ -30,4 +35,3 @@ func GetEnv(key, fallback string) string {
 	return fallback
 }
 
-var Env = initConfig()
