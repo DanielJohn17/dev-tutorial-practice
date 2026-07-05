@@ -10,8 +10,7 @@ import (
 )
 
 type UserHandlerInt interface {
-	CreateUserHandler(c *gin.Context)
-	GetUserId(c *gin.Context)
+	GetUserIdHandler(c *gin.Context)
 }
 
 type UserHandler struct {
@@ -22,7 +21,7 @@ func NewUserHandler(s *UserService) *UserHandler {
 	return &UserHandler{service: s}
 }
 
-func (h *UserHandler) GetUserById(c *gin.Context) {
+func (h *UserHandler) GetUserByIdHandler(c *gin.Context) {
 	id := c.Param("id")
 
 	userId, err := uuid.Parse(id)
@@ -35,5 +34,5 @@ func (h *UserHandler) GetUserById(c *gin.Context) {
 		helper.WriteError(c, http.StatusNotFound, err)
 	}
 
-	helper.WriteJson(c, http.StatusOK, user, &types.Meta{})
+	helper.WriteJSON(c, http.StatusOK, user, &types.Meta{})
 }
