@@ -7,7 +7,6 @@ import (
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"golang.org/x/tools/go/analysis/passes/nilfunc"
 )
 
 type UserServiceInt interface {

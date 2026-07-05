@@ -4,7 +4,9 @@ import (
 	"log"
 
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/config"
+	routes "github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/router"
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/storage"
+	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/user"
 )
 
 func main() {
@@ -21,5 +23,18 @@ func main() {
 	if err != nil {
 		log.Fatal("Error starting postgre database: ", err)
 	}
+
+	userRepo := user.NewUserRepository(db)
+	userSvc := user.NewUserService(userRepo)
+	userHandler := user.NewUserHandler(userSvc)
+
+	handlers := &routes.Handlers{
+		User: userHandler,
+	}
+
+	r := routes.NewRoutes(handlers)
+
+
+	r.Run(":8080")
 
 }
