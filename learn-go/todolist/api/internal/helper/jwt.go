@@ -10,11 +10,12 @@ import (
 )
 
 type UserToken struct {
+	jwt.RegisteredClaims
 	ID    uuid.UUID
 	Email string
 }
 
-var secretKey = config.Env.JWTSecretKey
+var secretKey = []byte(config.Env.JWTSecretKey)
 
 func CreateToken(user UserToken) (string, error) {
 	jwtExp := config.Env.JWTExpirationInSeconds
@@ -33,18 +34,29 @@ func CreateToken(user UserToken) (string, error) {
 	return tokenString, nil
 }
 
-func VerifyToken(tokenString string) error {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
-		return secretKey, nil
-	})
+func VerifyToken(tokenString string) (*UserToken, error) {
+	userToken := new(UserToken)
+
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		&UserToken{},
+		func(token *jwt.Token) (any, error) {
+			return secretKey, nil
+		},
+	)
 
 	if err != nil {
-		return fmt.Errorf("Error parsing token: %w", err)
+		return nil, fmt.Errorf("Error parsing token")
 	}
 
 	if !token.Valid {
-		return fmt.Errorf("Invalid token")
+		return nil, fmt.Errorf("Invalid token")
 	}
 
-	return nil
+	if claims, ok := token.Claims.(*UserToken); ok {
+		userToken.ID = claims.ID
+		userToken.Email = claims.Email
+	}
+
+	return userToken, nil
 }

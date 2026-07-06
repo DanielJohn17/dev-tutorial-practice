@@ -30,7 +30,7 @@ func ParseJSON[K comparable](c *gin.Context, payload K) error {
 		return fmt.Errorf("Missing request body")
 	}
 
-	if err := json.NewDecoder(c.Request.Body).Decode(payload); err != nil {
+	if err := json.NewDecoder(c.Request.Body).Decode(&payload); err != nil {
 		return fmt.Errorf("Error decoding payload: %w", err)
 	}
 
