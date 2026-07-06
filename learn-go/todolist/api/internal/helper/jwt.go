@@ -6,12 +6,11 @@ import (
 
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/config"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 )
 
 type UserToken struct {
 	jwt.RegisteredClaims
-	ID    uuid.UUID
+	ID    string
 	Email string
 }
 

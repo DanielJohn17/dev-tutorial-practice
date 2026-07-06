@@ -28,7 +28,7 @@ func (h *AuthHandler) RegisterHandler(c *gin.Context) {
 
 	var userRegister UserRegister
 
-	if err := helper.ParseJSON(c, &userRegister); err != nil {
+	if err := helper.ParseJSON(c, userRegister); err != nil {
 		helper.WriteError(c, http.StatusBadRequest, err)
 	}
 
@@ -37,7 +37,7 @@ func (h *AuthHandler) RegisterHandler(c *gin.Context) {
 		helper.WriteError(c, http.StatusInternalServerError, err)
 	}
 
-	token, err := helper.CreateToken(helper.UserToken{ID: user.ID, Email: user.Email})
+	token, err := helper.CreateToken(helper.UserToken{ID: user.ID.String(), Email: user.Email})
 	if err != nil {
 		helper.WriteError(c, http.StatusInternalServerError, err)
 	}
@@ -61,7 +61,7 @@ func (h *AuthHandler) LoginHandler(c *gin.Context) {
 
 	var userLogin UserLogin
 
-	if err := helper.ParseJSON(c, &userLogin); err != nil {
+	if err := helper.ParseJSON(c, userLogin); err != nil {
 		helper.WriteError(c, http.StatusBadRequest, err)
 	}
 
@@ -70,7 +70,7 @@ func (h *AuthHandler) LoginHandler(c *gin.Context) {
 		helper.WriteError(c, http.StatusUnauthorized, err)
 	}
 
-	token, err := helper.CreateToken(helper.UserToken{ID: user.ID, Email: user.Email})
+	token, err := helper.CreateToken(helper.UserToken{ID: user.ID.String(), Email: user.Email})
 	if err != nil {
 		helper.WriteError(c, http.StatusInternalServerError, err)
 	}
