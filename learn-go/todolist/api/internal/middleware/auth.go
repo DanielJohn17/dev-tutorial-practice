@@ -1,0 +1,34 @@
+package middleware
+
+import (
+	"net/http"
+
+	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/helper"
+	"github.com/gin-gonic/gin"
+)
+
+func Auth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Content-Type", "application/json")
+		tokenString := c.GetHeader("Authorization")
+
+		if tokenString == "" {
+			c.AbortWithStatusJSON(
+				http.StatusUnauthorized,
+				gin.H{"error": "Missing authorization header"},
+			)
+		}
+
+		tokenString = tokenString[len("Bearer "):]
+
+		userToken, err := helper.VerifyToken(tokenString)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		}
+
+		c.Set("userId", userToken.ID)
+		c.Set("userEmail", userToken.Email)
+
+		c.Next()
+	}
+}
