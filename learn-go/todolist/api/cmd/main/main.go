@@ -5,6 +5,7 @@ import (
 
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/auth"
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/config"
+	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/list"
 	routes "github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/router"
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/storage"
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/user"
@@ -34,9 +35,15 @@ func main() {
 	authSvc := auth.NewAuthService(userRepo)
 	authHandler := auth.NewAuthHandler(authSvc)
 
+	// todolist module setup
+	listRepo := list.NewListRepository(db)
+	listSvc := list.NewListService(listRepo)
+	listHandler := list.NewListHandler(listSvc)
+
 	handlers := &routes.Handlers{
 		User: userHandler,
 		Auth: authHandler,
+		List: listHandler,
 	}
 
 	r := routes.NewRoutes(handlers)

@@ -10,7 +10,7 @@ import (
 
 type UserRepositoryInt interface {
 	Create(ctx context.Context, user *User) (*User, error)
-	Update(ctx context.Context, user *User) error
+	Update(ctx context.Context, id uuid.UUID, fields map[string]any) error
 	GetUserById(ctx context.Context, id uuid.UUID) (*User, error)
 	GetUserByEmail(ctx context.Context, email string) (*User, error)
 }
@@ -36,11 +36,15 @@ func (r *UserRepository) Create(ctx context.Context, user *User) (*User, error) 
 	return user, nil
 }
 
-func (r *UserRepository) Update(ctx context.Context, user *User, id string) error {
-	_, err := gorm.G[User](
+func (r *UserRepository) Update(
+	ctx context.Context,
+	id uuid.UUID,
+	fields map[string]any,
+) error {
+	_, err := gorm.G[map[string]any](
 		r.db,
-	).Where("id = ?", id).
-		Updates(ctx, User{Name: user.Name, Age: user.Age, Email: user.Email})
+	).Table("users").Where("id = ?", id).
+		Updates(ctx, fields)
 	if err != nil {
 		return fmt.Errorf("Failed to update user: %w", err)
 	}
