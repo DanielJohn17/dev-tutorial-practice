@@ -1,0 +1,435 @@
+basePath: /
+definitions:
+  auth.AuthUserResponse:
+    properties:
+      age:
+        type: integer
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      token:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  auth.UserLogin:
+    properties:
+      email:
+        example: john@email.com
+        type: string
+      password:
+        example: Secret123
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  auth.UserRegister:
+    properties:
+      age:
+        example: 25
+        maximum: 100
+        minimum: 5
+        type: integer
+      email:
+        example: john@email.com
+        type: string
+      name:
+        example: John
+        maxLength: 155
+        minLength: 3
+        type: string
+      password:
+        example: Secret123
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  list.ListCreate:
+    properties:
+      description:
+        example: Things to do today
+        maxLength: 500
+        minLength: 3
+        type: string
+      title:
+        example: My Todo List
+        maxLength: 150
+        minLength: 3
+        type: string
+    required:
+    - title
+    type: object
+  list.ListResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  list.ListUpdate:
+    properties:
+      description:
+        example: Updated description
+        maxLength: 500
+        minLength: 3
+        type: string
+      title:
+        example: Updated Title
+        maxLength: 150
+        minLength: 3
+        type: string
+    type: object
+  types.APIResponse:
+    properties:
+      data: {}
+      error:
+        $ref: '#/definitions/types.ErrorInfo'
+      meta:
+        $ref: '#/definitions/types.Meta'
+      success:
+        type: boolean
+    type: object
+  types.ErrorInfo:
+    properties:
+      messege:
+        type: string
+    type: object
+  types.Meta:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  user.UserResponse:
+    properties:
+      age:
+        type: integer
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A todo list API with user management
+  title: Todolist API
+  version: "1.0"
+paths:
+  /api/v1/lists:
+    post:
+      consumes:
+      - application/json
+      description: Create a new todo list for the authenticated user
+      parameters:
+      - description: List payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/list.ListCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/list.ListResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new list
+      tags:
+      - lists
+  /api/v1/lists/{id}:
+    delete:
+      description: Delete a todo list by its ID
+      parameters:
+      - description: List ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a list
+      tags:
+      - lists
+    get:
+      description: Get a todo list by its ID
+      parameters:
+      - description: List ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/list.ListResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get list by ID
+      tags:
+      - lists
+    patch:
+      consumes:
+      - application/json
+      description: Partially update a todo list by its ID
+      parameters:
+      - description: List ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/list.ListUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/list.ListResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Update a list
+      tags:
+      - lists
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/auth.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/auth.AuthUserResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+      summary: Login user
+      tags:
+      - auth
+  /api/v1/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: Registration payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/auth.UserRegister'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/auth.AuthUserResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+      summary: Register a new user
+      tags:
+      - auth
+  /api/v1/users/{id}:
+    get:
+      description: Get a user by their UUID
+      parameters:
+      - description: User UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/user.UserResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get user by ID
+      tags:
+      - users
+swagger: "2.0"

@@ -29,7 +29,7 @@ func (s *AuthService) RegisterUser(
 	input UserRegister,
 ) (*user.UserResponse, error) {
 
-	if user, _ := s.repo.GetUserByEmail(ctx, input.Email); user != nil {
+	if existingUser, _ := s.repo.GetUserByEmail(ctx, input.Email); existingUser != nil {
 		return nil, fmt.Errorf("User already exists")
 	}
 

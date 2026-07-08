@@ -31,7 +31,7 @@ func (s *UserService) GetUserById(ctx context.Context, userId uuid.UUID) (*UserR
 		Name:      user.Name,
 		Email:     user.Email,
 		Age:       user.Age,
-		CreatedAt: user.createdAt.Format(time.RFC3339),
-		UpdatedAt: user.updatedAt.Format(time.RFC3339),
+		CreatedAt: user.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: user.UpdatedAt.Format(time.RFC3339),
 	}, nil
 }

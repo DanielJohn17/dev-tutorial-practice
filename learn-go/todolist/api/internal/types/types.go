@@ -8,7 +8,7 @@ type APIResponse struct {
 }
 
 type ErrorInfo struct {
-	Messege string `json:"messege"`
+	Message string `json:"messege"`
 }
 
 type Meta struct {

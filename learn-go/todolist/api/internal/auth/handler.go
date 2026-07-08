@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/helper"
@@ -24,22 +26,38 @@ func NewAuthHandler(s *AuthService) *AuthHandler {
 	}
 }
 
+// RegisterHandler godoc
+// @Summary      Register a new user
+// @Description  Create a new user account
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        input  body      UserRegister  true  "Registration payload"
+// @Success      200    {object}  types.APIResponse{data=AuthUserResponse}
+// @Failure      400    {object}  types.APIResponse{error=types.ErrorInfo}
+// @Failure      500    {object}  types.APIResponse{error=types.ErrorInfo}
+// @Router       /api/v1/register [post]
 func (h *AuthHandler) RegisterHandler(c *gin.Context) {
 
 	var userRegister UserRegister
 
-	if err := helper.ParseJSON(c, userRegister); err != nil {
+	fmt.Printf("My variable value is: %v\n", userRegister) // Prints to terminal
+
+	if err := helper.ParseJSON(c, &userRegister); err != nil {
 		helper.WriteError(c, http.StatusBadRequest, err)
+		return
 	}
 
 	user, err := h.service.RegisterUser(c, userRegister)
 	if err != nil {
 		helper.WriteError(c, http.StatusInternalServerError, err)
+		return
 	}
 
 	token, err := helper.CreateToken(helper.UserToken{ID: user.ID.String(), Email: user.Email})
 	if err != nil {
 		helper.WriteError(c, http.StatusInternalServerError, err)
+		return
 	}
 
 	response := AuthUserResponse{
@@ -57,22 +75,35 @@ func (h *AuthHandler) RegisterHandler(c *gin.Context) {
 	helper.WriteJSON(c, http.StatusOK, response, &types.Meta{})
 }
 
+// LoginHandler godoc
+// @Summary      Login user
+// @Description  Authenticate user and return JWT token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        input  body      UserLogin  true  "Login credentials"
+// @Success      200    {object}  types.APIResponse{data=AuthUserResponse}
+// @Failure      401    {object}  types.APIResponse{error=types.ErrorInfo}
+// @Router       /api/v1/login [post]
 func (h *AuthHandler) LoginHandler(c *gin.Context) {
 
 	var userLogin UserLogin
 
-	if err := helper.ParseJSON(c, userLogin); err != nil {
+	if err := helper.ParseJSON(c, &userLogin); err != nil {
 		helper.WriteError(c, http.StatusBadRequest, err)
+		return
 	}
 
 	user, err := h.service.LoginUser(c, userLogin)
 	if err != nil {
 		helper.WriteError(c, http.StatusUnauthorized, err)
+		return
 	}
 
 	token, err := helper.CreateToken(helper.UserToken{ID: user.ID.String(), Email: user.Email})
 	if err != nil {
 		helper.WriteError(c, http.StatusInternalServerError, err)
+		return
 	}
 
 	response := AuthUserResponse{

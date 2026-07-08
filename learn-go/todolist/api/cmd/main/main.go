@@ -11,6 +11,11 @@ import (
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/user"
 )
 
+// @title           Todolist API
+// @version         1.0
+// @description     A todo list API with user management
+// @host            localhost:8080
+// @BasePath        /
 func main() {
 	db, err := storage.NewDatabase(
 		storage.DBConfig{
@@ -25,6 +30,9 @@ func main() {
 	if err != nil {
 		log.Fatal("Error starting postgre database: ", err)
 	}
+
+	// Auto migrate tables for now
+	db.AutoMigrate(&user.User{}, &list.List{})
 
 	// User module setup
 	userRepo := user.NewUserRepository(db)

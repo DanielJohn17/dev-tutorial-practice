@@ -23,14 +23,14 @@ func SetMeta(offset, limit, total uint) *types.Meta {
 
 }
 
-func ParseJSON[K comparable](c *gin.Context, payload K) error {
+func ParseJSON[K comparable](c *gin.Context, payload *K) error {
 	validate := validator.New()
 
 	if c.Request.Body == nil {
 		return fmt.Errorf("Missing request body")
 	}
 
-	if err := json.NewDecoder(c.Request.Body).Decode(&payload); err != nil {
+	if err := json.NewDecoder(c.Request.Body).Decode(payload); err != nil {
 		return fmt.Errorf("Error decoding payload: %w", err)
 	}
 
@@ -42,7 +42,7 @@ func ParseJSON[K comparable](c *gin.Context, payload K) error {
 }
 
 func WriteJSON(c *gin.Context, status int, data any, meta *types.Meta) {
-	c.JSON(status, types.APIResponse{
+	c.IndentedJSON(status, types.APIResponse{
 		Success: true,
 		Data:    data,
 		Meta:    meta,
@@ -50,10 +50,10 @@ func WriteJSON(c *gin.Context, status int, data any, meta *types.Meta) {
 }
 
 func WriteError(c *gin.Context, status int, err error) {
-	c.JSON(status, types.APIResponse{
+	c.AbortWithStatusJSON(status, types.APIResponse{
 		Success: false,
 		Error: &types.ErrorInfo{
-			Messege: err.Error(),
+			Message: err.Error(),
 		},
 	})
 

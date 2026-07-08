@@ -1,11 +1,14 @@
 package routes
 
 import (
+	_ "github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/docs"
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/auth"
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/list"
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/middleware"
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/user"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Handlers struct {
@@ -17,6 +20,8 @@ type Handlers struct {
 func NewRoutes(h *Handlers) *gin.Engine {
 
 	router := gin.Default()
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	subRouter := router.Group("/api/v1")
 
