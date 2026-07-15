@@ -10,6 +10,16 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+func Transform[Input, Output any](input []Input, transformFunc func(Input) Output) []Output {
+	result := make([]Output, len(input))
+
+	for i, v := range input {
+		result[i] = transformFunc(v)
+	}
+
+	return result
+}
+
 func SetMeta(offset, limit, total uint) *types.Meta {
 	page := math.Floor(float64(offset)/float64(limit)) + 1
 	totalPages := math.Floor(float64(total)/float64(limit)) + 1

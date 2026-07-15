@@ -40,7 +40,6 @@ func main() {
 	// User module setup
 	userRepo := user.NewUserRepository(db)
 	userSvc := user.NewUserService(userRepo)
-	userHandler := user.NewUserHandler(userSvc)
 
 	// Auth module setup
 	authSvc := auth.NewAuthService(userRepo)
@@ -50,6 +49,8 @@ func main() {
 	listRepo := list.NewListRepository(db)
 	listSvc := list.NewListService(listRepo)
 	listHandler := list.NewListHandler(listSvc)
+
+	userHandler := user.NewUserHandler(userSvc)
 
 	handlers := &routes.Handlers{
 		User: userHandler,

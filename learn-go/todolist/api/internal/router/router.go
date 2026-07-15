@@ -36,9 +36,10 @@ func NewRoutes(h *Handlers) *gin.Engine {
 
 		// todolist routes
 		subRouter.POST("/lists", h.List.CreateListHandler)
-		subRouter.GET("/lists/:id", h.List.GetListById)
+		subRouter.GET("/lists", h.List.GetUserListsHandler)
+		subRouter.GET("/lists/:id", h.List.GetListByIdHandler)
 		subRouter.PATCH("/lists/:id", h.List.UpdateListHandler)
-		subRouter.DELETE("/lists/:id", h.List.DeleteList)
+		subRouter.DELETE("/lists/:id", h.List.DeleteListHandler)
 
 	}
 	return router

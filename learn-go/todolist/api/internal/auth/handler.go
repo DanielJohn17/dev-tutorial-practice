@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/helper"
@@ -39,8 +38,6 @@ func NewAuthHandler(s *AuthService) *AuthHandler {
 func (h *AuthHandler) RegisterHandler(c *gin.Context) {
 
 	var userRegister UserRegister
-
-	fmt.Printf("My variable value is: %v\n", userRegister) // Prints to terminal
 
 	if err := helper.ParseJSON(c, &userRegister); err != nil {
 		helper.WriteError(c, http.StatusBadRequest, err)

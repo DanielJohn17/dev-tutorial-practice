@@ -34,7 +34,7 @@ func (r *ListRepository) Create(cxt context.Context, list *List) (*List, error) 
 }
 
 func (r *ListRepository) GetLists(cxt context.Context, id uuid.UUID) ([]List, error) {
-	lists, err := gorm.G[List](r.db).Where("userId = ?", id).Find(cxt)
+	lists, err := gorm.G[List](r.db).Where("user_id = ?", id).Find(cxt)
 	if err != nil {
 		return nil, fmt.Errorf("Invalid user Id")
 	}
@@ -63,9 +63,13 @@ func (r *ListRepository) Update(cxt context.Context, id uuid.UUID, fields map[st
 
 func (r *ListRepository) Delete(cxt context.Context, id uuid.UUID) error {
 
-	_, err := gorm.G[List](r.db).Where("id = ?", id).Delete(cxt)
+	rowsAffected, err := gorm.G[List](r.db).Where("id = ?", id).Delete(cxt)
 	if err != nil {
 		return fmt.Errorf("Failed to delete list")
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("List does not exist")
 	}
 
 	return nil

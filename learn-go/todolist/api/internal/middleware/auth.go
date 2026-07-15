@@ -17,13 +17,24 @@ func Auth() gin.HandlerFunc {
 				http.StatusUnauthorized,
 				gin.H{"error": "Missing authorization header"},
 			)
+			return
 		}
 
-		tokenString = tokenString[len("Bearer "):]
+		const prefix = "Bearer "
+		if len(tokenString) < len(prefix) || tokenString[:len(prefix)] != prefix {
+			c.AbortWithStatusJSON(
+				http.StatusUnauthorized,
+				gin.H{"error": "Invalid authorization format, expected 'Bearer <token>'"},
+			)
+			return
+		}
+
+		tokenString = tokenString[len(prefix):]
 
 		userToken, err := helper.VerifyToken(tokenString)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			return
 		}
 
 		c.Set("userId", userToken.ID)

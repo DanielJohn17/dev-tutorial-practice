@@ -35,7 +35,7 @@ func (s *AuthService) RegisterUser(
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, fmt.Errorf("Passowrd error: %w", err)
+		return nil, fmt.Errorf("Password error: %w", err)
 	}
 
 	userCreated, err := s.repo.Create(
@@ -76,6 +76,7 @@ func (s *AuthService) LoginUser(ctx context.Context, input UserLogin) (*user.Use
 	return &user.UserResponse{
 		ID:        userInDB.ID,
 		Name:      userInDB.Name,
+		Email:     userInDB.Email,
 		Age:       userInDB.Age,
 		CreatedAt: userInDB.CreatedAt.Format(time.RFC3339),
 		UpdatedAt: userInDB.UpdatedAt.Format(time.RFC3339),

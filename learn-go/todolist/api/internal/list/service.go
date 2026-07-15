@@ -3,14 +3,17 @@ package list
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/helper"
 	"github.com/google/uuid"
 )
 
 type ListServiceInt interface {
-	CreateList(cxt context.Context, input ListCreate, id string) (*List, error)
-	UpdateList(cxt context.Context, input ListUpdate, id string) (*List, error)
-	GetListById(cxt context.Context, id string) (*List, error)
+	CreateList(cxt context.Context, input ListCreate, id string) (*ListResponse, error)
+	UpdateList(cxt context.Context, input ListUpdate, id string) (*ListResponse, error)
+	GetListsByUserId(cxt context.Context, userId string) (*ListResponse, error)
+	GetListById(cxt context.Context, id string) (*ListResponse, error)
 	DeleteList(cxt context.Context, id string) error
 }
 
@@ -22,7 +25,11 @@ func NewListService(r *ListRepository) *ListService {
 	return &ListService{repo: r}
 }
 
-func (s *ListService) CreateList(cxt context.Context, input ListCreate, id string) (*List, error) {
+func (s *ListService) CreateList(
+	cxt context.Context,
+	input ListCreate,
+	id string,
+) (*ListResponse, error) {
 
 	userId, err := uuid.Parse(id)
 	if err != nil {
@@ -30,9 +37,9 @@ func (s *ListService) CreateList(cxt context.Context, input ListCreate, id strin
 	}
 
 	list := &List{
-		Title:        input.Title,
-		Descrtiption: input.Description,
-		UserId:       userId,
+		Title:       input.Title,
+		Description: input.Description,
+		UserId:      userId,
 	}
 
 	listCreated, err := s.repo.Create(cxt, list)
@@ -40,14 +47,25 @@ func (s *ListService) CreateList(cxt context.Context, input ListCreate, id strin
 		return nil, err
 	}
 
-	return listCreated, nil
+	return &ListResponse{
+		ID:          listCreated.ID,
+		Title:       listCreated.Title,
+		Description: listCreated.Description,
+		UserId:      listCreated.UserId,
+		CreatedAt:   listCreated.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:   listCreated.CreatedAt.Format(time.RFC3339),
+	}, nil
 }
 
-func (s *ListService) UpdateList(cxt context.Context, input ListUpdate, id string) (*List, error) {
+func (s *ListService) UpdateList(
+	cxt context.Context,
+	input ListUpdate,
+	id string,
+) (*ListResponse, error) {
 
 	fields := make(map[string]any)
 
-	listId, err := parseListId(id)
+	listId, err := parseUUID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -72,12 +90,45 @@ func (s *ListService) UpdateList(cxt context.Context, input ListUpdate, id strin
 		return nil, err
 	}
 
-	return list, nil
+	return &ListResponse{
+		ID:          list.ID,
+		Title:       list.Title,
+		Description: list.Description,
+		UserId:      list.UserId,
+		CreatedAt:   list.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:   list.UpdatedAt.Format(time.RFC3339),
+	}, nil
 }
 
-func (s *ListService) GetListById(cxt context.Context, id string) (*List, error) {
+func (s *ListService) GetListsByUserId(cxt context.Context, userId string) ([]ListResponse, error) {
 
-	listId, err := parseListId(id)
+	userUUID, err := parseUUID(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	lists, err := s.repo.GetLists(cxt, *userUUID)
+	if err != nil {
+		return nil, err
+	}
+
+	filteredLists := helper.Transform(lists, func(list List) ListResponse {
+		return ListResponse{
+			ID:          list.ID,
+			Title:       list.Title,
+			Description: list.Description,
+			UserId:      list.UserId,
+			CreatedAt:   list.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:   list.UpdatedAt.Format(time.RFC3339),
+		}
+	})
+
+	return filteredLists, nil
+}
+
+func (s *ListService) GetListById(cxt context.Context, id string) (*ListResponse, error) {
+
+	listId, err := parseUUID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -87,12 +138,19 @@ func (s *ListService) GetListById(cxt context.Context, id string) (*List, error)
 		return nil, err
 	}
 
-	return list, err
+	return &ListResponse{
+		ID:          list.ID,
+		Title:       list.Title,
+		Description: list.Description,
+		UserId:      list.UserId,
+		CreatedAt:   list.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:   list.UpdatedAt.Format(time.RFC3339),
+	}, err
 }
 
 func (s *ListService) DeleteList(cxt context.Context, id string) error {
 
-	listId, err := parseListId(id)
+	listId, err := parseUUID(id)
 	if err != nil {
 		return err
 	}
@@ -104,10 +162,10 @@ func (s *ListService) DeleteList(cxt context.Context, id string) error {
 	return nil
 }
 
-func parseListId(id string) (*uuid.UUID, error) {
+func parseUUID(id string) (*uuid.UUID, error) {
 	listId, err := uuid.Parse(id)
 	if err != nil {
-		return nil, fmt.Errorf("Invalid user Id")
+		return nil, fmt.Errorf("Invalid UUID")
 	}
 
 	return &listId, nil

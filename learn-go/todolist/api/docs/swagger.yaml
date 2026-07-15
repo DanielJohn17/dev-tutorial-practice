@@ -107,7 +107,7 @@ definitions:
     type: object
   types.ErrorInfo:
     properties:
-      messege:
+      message:
         type: string
     type: object
   types.Meta:
@@ -144,6 +144,36 @@ info:
   version: "1.0"
 paths:
   /api/v1/lists:
+    get:
+      description: Get all todo lists for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/list.ListResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.APIResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/types.ErrorInfo'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get user lists
+      tags:
+      - lists
     post:
       consumes:
       - application/json
@@ -434,7 +464,7 @@ paths:
       - users
 securityDefinitions:
   BearerAuth:
-    bearerFormat: JWT
-    scheme: bearer
-    type: http
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

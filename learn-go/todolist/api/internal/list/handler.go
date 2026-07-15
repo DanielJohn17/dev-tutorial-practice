@@ -11,9 +11,10 @@ import (
 
 type ListHandlerInt interface {
 	CreateListHandler(c *gin.Context)
-	GetListById(c *gin.Context)
+	GetListsHandler(c *gin.Context)
+	GetListByIdHandler(c *gin.Context)
 	UpdateListHandler(c *gin.Context)
-	DeleteList(c *gin.Context)
+	DeleteListHandler(c *gin.Context)
 }
 
 type ListHandler struct {
@@ -60,6 +61,31 @@ func (h *ListHandler) CreateListHandler(c *gin.Context) {
 	helper.WriteJSON(c, http.StatusCreated, list, &types.Meta{})
 }
 
+// GetUserListsHandler godoc
+// @Summary      Get user lists
+// @Description  Get all todo lists for the authenticated user
+// @Tags         lists
+// @Produce      json
+// @Success      200  {object}  types.APIResponse{data=[]list.ListResponse}
+// @Failure      500  {object}  types.APIResponse{error=types.ErrorInfo}
+// @Router       /api/v1/lists [get]
+// @Security     BearerAuth
+func (h *ListHandler) GetUserListsHandler(c *gin.Context) {
+	userId, ok := c.Get("userId")
+	if !ok {
+		helper.WriteError(c, http.StatusUnauthorized, fmt.Errorf("Unauthorized"))
+		return
+	}
+
+	Lists, err := h.service.GetListsByUserId(c, fmt.Sprintf("%v", userId))
+	if err != nil {
+		helper.WriteError(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	helper.WriteJSON(c, http.StatusOK, Lists, &types.Meta{})
+}
+
 // GetListById godoc
 // @Summary      Get list by ID
 // @Description  Get a todo list by its ID
@@ -70,7 +96,7 @@ func (h *ListHandler) CreateListHandler(c *gin.Context) {
 // @Failure      404  {object}  types.APIResponse{error=types.ErrorInfo}
 // @Router       /api/v1/lists/{id} [get]
 // @Security     BearerAuth
-func (h *ListHandler) GetListById(c *gin.Context) {
+func (h *ListHandler) GetListByIdHandler(c *gin.Context) {
 
 	listId := c.Param("id")
 
@@ -126,7 +152,7 @@ func (h *ListHandler) UpdateListHandler(c *gin.Context) {
 // @Failure      500 {object}  types.APIResponse{error=types.ErrorInfo}
 // @Router       /api/v1/lists/{id} [delete]
 // @Security     BearerAuth
-func (h *ListHandler) DeleteList(c *gin.Context) {
+func (h *ListHandler) DeleteListHandler(c *gin.Context) {
 
 	listId := c.Param("id")
 

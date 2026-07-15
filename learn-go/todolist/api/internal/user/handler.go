@@ -11,6 +11,7 @@ import (
 
 type UserHandlerInt interface {
 	GetUserIdHandler(c *gin.Context)
+	GetUserLists9c(c *gin.Context)
 }
 
 type UserHandler struct {
