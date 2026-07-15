@@ -11,8 +11,8 @@
 *.test
 
 # Build outputs
-/bin/
-/pkg/
+bin/
+pkg/
 
 # Dependency directory (if using vendor)
 vendor/

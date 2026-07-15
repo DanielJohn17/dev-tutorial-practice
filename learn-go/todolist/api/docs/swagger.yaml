@@ -432,4 +432,9 @@ paths:
       summary: Get user by ID
       tags:
       - users
+securityDefinitions:
+  BearerAuth:
+    bearerFormat: JWT
+    scheme: bearer
+    type: http
 swagger: "2.0"

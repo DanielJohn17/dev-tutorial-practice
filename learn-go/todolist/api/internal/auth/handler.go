@@ -2,7 +2,6 @@ package auth
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/DanielJohn17/dev-tutorial-practice/learn-go/todolist/api/internal/helper"
