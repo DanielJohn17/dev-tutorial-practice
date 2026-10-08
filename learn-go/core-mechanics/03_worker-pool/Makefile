@@ -1,0 +1,3 @@
+.PHONY: test bench
+test:
+	go test -race -v ./...
